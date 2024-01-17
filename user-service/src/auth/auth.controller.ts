@@ -1,14 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthService } from './auth.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './local-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService){}
+    constructor(private authService: AuthService) { }
 
+    @UseGuards(LocalAuthGuard)
     @Post('login')
-    signIn(@Body() signInDto: SignInDto) {
-        return this.authService.signIn(signInDto.email,signInDto.password)
+    async login(@Request() req:any, @Body() siginDto:SignInDto) {
+        return this.authService.login(req.user)
     }
+
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Request() req:any){
+        return req.user
+    }
+    // @ApiBearerAuth()
+    // @UseGuards(AuthGuard)
+    // @Get('profile')
+    // getProfile(@Request() req: any) {
+    //     return req.user;
+    // }
 }
