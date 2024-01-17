@@ -1,55 +1,58 @@
 /* eslint-disable prettier/prettier */
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm'
+import { InjectMapper } from '@automapper/nestjs'
+import { Mapper } from '@automapper/core';
 
 @Injectable()
 export class ProductsService {
 
-  products: Array<Product> = [
-    new Product('product1',  450,randomUUID()),
-    new Product( 'product2', 250,randomUUID()),
-    new Product( 'product3', 250,randomUUID()),
-    new Product( 'product4', 250,randomUUID()),
-    new Product( 'product5', 250,randomUUID()),
-    new Product( 'product6', 250,randomUUID()),
-    new Product( 'product7', 250,randomUUID()),
-
-  ];
 
   constructor(
     @Inject('PRODUCT_REPOSITORY')
-    private productRepository: Repository<Product>, 
-  ){}
+    private productRepository: Repository<Product>,
+    @((InjectMapper as any)()) private readonly classMapper: Mapper,
+  ) { }
 
 
-  create(createProductDto: Product) {
-    this.productRepository.save(createProductDto)    
+  async create(createProductDto: CreateProductDto) {
+    const newEntity = this.classMapper.map(createProductDto, CreateProductDto, Product)
+    return this.classMapper.mapAsync(await this.productRepository.save(newEntity), Product, CreateProductDto)
   }
 
-  findAll() {
-
-    // this.products.push();
-    console.log(this.products[1])
-    return this.products;
+  async findAll() {
+    return this.classMapper.mapArrayAsync(await this.productRepository.find(), Product, CreateProductDto);
   }
 
-  findOne(id: string) {
-    
-    return this.products.find((obj) => {
-      return obj.productId === id;
-    });
+  async findOne(id: number) {
+
+    return this.classMapper.map(await this.productRepository.findOneBy({ productId: id }), Product, CreateProductDto)
+
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    const obj = await this.productRepository.findOneBy({ productId: id })
+    if (obj != null) {
+      const product = this.classMapper.map(updateProductDto, UpdateProductDto, Product)
+      console.log(product)
+      return this.classMapper.map(await this.productRepository.save(product), Product, UpdateProductDto)
+    }
+
+
+    else
+      throw new HttpException('This Item deos not exits', HttpStatus.NOT_FOUND)
   }
 
-  remove(id: string) {
-    // const result = this.findOne(id);
-    return this.products.pop()
+  async remove(id: number) {
+    const obj = await this.productRepository.findOneBy({ productId: id })
+    if (obj === null)
+      throw new HttpException('No record Found', HttpStatus.NOT_FOUND)
+    this.productRepository.delete({ productId: id })
+
   }
 }

@@ -2,31 +2,27 @@
 import { v4 as uuid  } from 'uuid';
 import { BaseEntity, Column, Double, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+import { AutoMap } from "@automapper/classes";
+
 @Entity()
-export class Product extends BaseEntity {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor( productName: string, price: number, userId: string) {
-    super();
-
-    this.productName = productName;
-    this.price = price;
-    this.userId = userId;
-    
-    };
+export class Product {
 
 
-  @PrimaryGeneratedColumn('uuid')
-  // @Column({ type: 'uuid' })
-  productId: string;
+  @AutoMap()
+  @PrimaryGeneratedColumn()
+  productId: number;
   
 
+  @AutoMap()
   @Column({ type: 'varchar' })
   productName: string;
 
+  @AutoMap()
   @Column({ type: 'float' })
   price: number;
 
 
+  @AutoMap()
   @Column({ type: 'uuid' })
   userId: string;
 }

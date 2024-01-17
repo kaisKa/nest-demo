@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -7,7 +8,7 @@ async function bootstrap() {
 
   // init swagger 
   const config = new DocumentBuilder()
-    .setTitle('Prodict Docs')
+    .setTitle('Product Docs')
     .setDescription('Set of endpoints to access the product service')
     .setVersion('1.0')
     .addTag('products')

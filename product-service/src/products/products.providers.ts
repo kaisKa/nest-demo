@@ -9,5 +9,5 @@ export const productProviders = [
         useFactory: (datSource:DataSource) => datSource.getRepository(Product),
         inject: ['DATA_SOURCE']
   },
-  
+    
 ]
