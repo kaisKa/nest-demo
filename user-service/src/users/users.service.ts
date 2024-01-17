@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,7 +7,7 @@ import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
 
@@ -23,7 +24,9 @@ export class UsersService {
     const checkUser = await this.findByEmail(createUserDto.email);
     if (checkUser)
       throw new HttpException('User Already exist', HttpStatus.CONFLICT);
-    return await this.userRepository.save(this.classMapper.map(createUserDto, CreateUserDto, Users))
+    const user = await this.classMapper.map(createUserDto, CreateUserDto, Users);
+    user.password = await this.hashPassword(createUserDto.password)
+    return await this.userRepository.save(user)
   }
 
   async findAll() {
@@ -45,4 +48,11 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
+  async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt();
+    return await bcrypt.hash(password, salt);
+  }
+
+
 }

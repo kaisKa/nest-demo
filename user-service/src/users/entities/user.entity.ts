@@ -25,7 +25,7 @@ export class Users extends BaseEntity {
 
   @AutoMap()
   @Column({
-    type: 'varchar'
+    type: 'varchar', length: 2048
   })
   password: string;
 
