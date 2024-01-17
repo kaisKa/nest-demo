@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from './entities/user.entity';
@@ -17,18 +17,21 @@ export class UsersService {
   ) { }
 
 
-  
+
 
   async create(createUserDto: CreateUserDto) {
-    return await this.userRepository.save(this.classMapper.map(createUserDto,CreateUserDto,Users))
+    const checkUser = await this.findByEmail(createUserDto.email);
+    if (checkUser)
+      throw new HttpException('User Already exist', HttpStatus.CONFLICT);
+    return await this.userRepository.save(this.classMapper.map(createUserDto, CreateUserDto, Users))
   }
 
   async findAll() {
     return await this.userRepository.find();
   }
 
-  async findByEmail(email:string){
-    return await this.userRepository.findOneBy({email: email})
+  async findByEmail(email: string) {
+    return await this.userRepository.findOneBy({ email: email })
   }
 
   findOne(id: number) {

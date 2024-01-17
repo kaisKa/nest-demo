@@ -7,11 +7,13 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { SkipAuth } from './skip-auth.decorator';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
+    @SkipAuth()
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Request() req:any, @Body() siginDto:SignInDto) {
@@ -20,7 +22,7 @@ export class AuthController {
 
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get('profile')
     getProfile(@Request() req:any){
         return req.user

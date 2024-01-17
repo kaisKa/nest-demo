@@ -2,7 +2,7 @@
 import { Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 /**
- * Tjis Guard resposible of checking the user credintials 
+ * This Guard resposible of checking the user credintials 
  */
 
 
