@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 // import { v4 as uuidv4 } from 'uuid';
 import { AutoMap } from "@automapper/classes";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Users extends BaseEntity {
 
@@ -34,4 +34,7 @@ export class Users extends BaseEntity {
     type: 'varchar',
   })
   status: string;
+
+  @CreateDateColumn()
+  createdAt: string
 }

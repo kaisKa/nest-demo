@@ -3,14 +3,15 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
-import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm'
 import { InjectMapper } from '@automapper/nestjs'
 import { Mapper } from '@automapper/core';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { SortOrder, Sorting } from './sort.decorator';
 
 @Injectable()
 export class ProductsService {
+
 
 
   constructor(
@@ -55,4 +56,21 @@ export class ProductsService {
     this.productRepository.delete({ productId: id })
 
   }
+
+  async paginate(options: IPaginationOptions, orderProperty: string, orderDirection: SortOrder): Promise<Pagination<Product>> {
+
+    const queryBuilder = this.productRepository.createQueryBuilder('c')
+    queryBuilder.orderBy(orderProperty, orderDirection)
+    return paginate<Product>(queryBuilder, options)
+
+  }
+
+  getUserPrducts(userId: string) {
+    return this.productRepository.findBy({ userId: userId })
+  }
+
 }
+
+
+
+

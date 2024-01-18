@@ -14,15 +14,19 @@ export class Product {
   
 
   @AutoMap()
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar' , name: 'product_name'})
   productName: string;
 
   @AutoMap()
-  @Column({ type: 'float' })
+  @Column({ type: 'float' ,name: 'price'})
   price: number;
 
 
   @AutoMap()
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid' ,name: 'user_id'})
   userId: string;
+}
+export enum SortingOption {
+  price = 'price',
+  productName = 'product_name',
 }
