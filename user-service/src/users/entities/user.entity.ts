@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 // import { v4 as uuidv4 } from 'uuid';
 import { AutoMap } from "@automapper/classes";
+import { Role } from "src/models/role.enum";
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Users extends BaseEntity {
@@ -35,6 +36,12 @@ export class Users extends BaseEntity {
   })
   status: string;
 
+  @AutoMap()
+  @Column("varchar", { array: true , nullable: true})
+  roles?: Role[]
+
   @CreateDateColumn()
   createdAt: string
+
+
 }

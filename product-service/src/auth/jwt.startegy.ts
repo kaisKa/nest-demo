@@ -5,6 +5,7 @@ import { Strategy } from "passport-jwt"
 import { jwtConstants } from "./constants"
 import { Injectable } from "@nestjs/common";
 
+
 @Injectable()
 export class JwtStartegy extends PassportStrategy(Strategy) {
 
@@ -19,6 +20,7 @@ export class JwtStartegy extends PassportStrategy(Strategy) {
 
     async validate(payload: any) {
 
+       
         // u could add invokation to db to add more details of the user
         return { userId: payload.sub, email: payload.eamil, roles: payload.roles, }
     }

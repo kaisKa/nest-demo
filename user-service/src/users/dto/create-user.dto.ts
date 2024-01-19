@@ -1,4 +1,5 @@
 import { AutoMap } from "@automapper/classes";
+import { Role } from "src/models/role.enum";
 
 /* eslint-disable prettier/prettier */
 export class CreateUserDto {
@@ -13,4 +14,6 @@ export class CreateUserDto {
     password: string;
     @AutoMap()
     status: string;
+    @AutoMap()
+    roles: Role[]
 }

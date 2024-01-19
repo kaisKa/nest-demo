@@ -8,6 +8,8 @@ import { InjectMapper } from '@automapper/nestjs'
 import { Mapper } from '@automapper/core';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { SortOrder, Sorting } from './sort.decorator';
+import { Filtering } from './entities/filter.decorator';
+import { getWhere } from './entities/typeorm.helper';
 
 @Injectable()
 export class ProductsService {
@@ -65,7 +67,17 @@ export class ProductsService {
 
   }
 
+  async filtering(filter?: Filtering) {
+
+    const where = getWhere(filter);
+    const queryBuilder = this.productRepository.find({ where })
+    return queryBuilder;
+
+
+  }
+
   getUserPrducts(userId: string) {
+    console.log(userId)
     return this.productRepository.findBy({ userId: userId })
   }
 

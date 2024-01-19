@@ -1,12 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query, DefaultValuePipe, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, SortingOption } from './entities/product.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { SortOrder } from './sort.decorator';
+import { Filtering, FilteringParams } from './entities/filter.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { HasRoles } from 'src/auth/has-role.decorator';
+import { Role } from 'src/models/role.enum';
 
 @Controller('products')
 export class ProductsController {
@@ -23,6 +27,9 @@ export class ProductsController {
   }
 
   @Get('listAll')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @HasRoles(Role.User)
   @ApiOperation({ summary: 'List all product, paginated and sorted descinding regarding the price' })
   @ApiQuery({ name: 'sort.propertye', required: false, enum: SortingOption })
   @ApiQuery({ name: 'sort.direction', required: false, enum: SortOrder })
@@ -46,10 +53,23 @@ export class ProductsController {
 
   }
 
+
+  @Get('filter')
+  @ApiQuery({ name: 'filter', description: 'Formate(property:operator:value)', type: String, example: 'product_name:eq:xyz' })
+  async browseByFilter(
+    @FilteringParams(['price', 'productName']) filter?: Filtering
+  ) {
+    return this.productsService.filtering(
+      filter);
+  }
+
   @Get('user/:userId')
-  @ApiParam({name: 'userId',type: String})
-  getUserProducts(userId:string){
-    return this.productsService.getUserPrducts(userId)
+  @ApiParam({ name: 'userId', type: String, required: false })
+  @ApiBearerAuth()
+  @HasRoles(Role.User)
+  getUserProducts(@Request() req: any) {
+    console.log(req.user.sub)
+    return this.productsService.getUserPrducts(req.user.userId)
   }
 
   @Get(':id')

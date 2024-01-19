@@ -12,6 +12,7 @@ async function bootstrap() {
     .setDescription('Set of endpoints to access the product service')
     .setVersion('1.0')
     .addTag('products')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

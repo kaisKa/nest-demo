@@ -8,6 +8,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { SkipAuth } from './skip-auth.decorator';
+import { RolesGuard } from './roles.guard';
+import { HasRoles } from './has-role.decorator';
+import { Role } from 'src/models/role.enum';
+import { userProviders } from 'src/users/user.providers';
 
 @Controller('auth')
 export class AuthController {
@@ -27,10 +31,13 @@ export class AuthController {
     getProfile(@Request() req:any){
         return req.user
     }
-    // @ApiBearerAuth()
-    // @UseGuards(AuthGuard)
-    // @Get('profile')
-    // getProfile(@Request() req: any) {
-    //     return req.user;
-    // }
+    
+    
+    @Get('list-all')
+    @UseGuards(RolesGuard)
+    @HasRoles(Role.Admin)
+    @ApiBearerAuth()
+    getAllUser(){
+        return this.authService.listAll()
+    }
 }

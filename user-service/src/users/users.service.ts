@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/models/role.enum';
 @Injectable()
 export class UsersService {
 
@@ -26,6 +27,7 @@ export class UsersService {
       throw new HttpException('User Already exist', HttpStatus.CONFLICT);
     const user = await this.classMapper.map(createUserDto, CreateUserDto, Users);
     user.password = await this.hashPassword(createUserDto.password)
+    user.roles = [Role.User]
     return await this.userRepository.save(user)
   }
 
