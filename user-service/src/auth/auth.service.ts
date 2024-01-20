@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Users } from 'src/users/entities/user.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,12 @@ export class AuthService {
         private usersService: UsersService,
         private jwtService: JwtService
     ) { }
+
+
+
+    create(createUserDto: CreateUserDto) {
+        throw this.usersService.create(createUserDto)
+    }
 
     async validateUser(email: string, pass: string): Promise<any> {
         const user = await this.usersService.findByEmail(email);
@@ -43,8 +50,8 @@ export class AuthService {
         };
     }
 
-    listAll(){
+    listAll() {
         return this.usersService.findAll();
     }
-    
+
 }

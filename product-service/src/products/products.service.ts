@@ -23,8 +23,9 @@ export class ProductsService {
   ) { }
 
 
-  async create(createProductDto: CreateProductDto) {
+  async create(userId: string, createProductDto: CreateProductDto) {
     const newEntity = this.classMapper.map(createProductDto, CreateProductDto, Product)
+    newEntity.userId = userId;
     return this.classMapper.mapAsync(await this.productRepository.save(newEntity), Product, CreateProductDto)
   }
 
@@ -40,15 +41,14 @@ export class ProductsService {
 
   async update(id: number, updateProductDto: UpdateProductDto) {
     const obj = await this.productRepository.findOneBy({ productId: id })
-    if (obj != null) {
-      const product = this.classMapper.map(updateProductDto, UpdateProductDto, Product)
-      console.log(product)
-      return this.classMapper.map(await this.productRepository.save(product), Product, UpdateProductDto)
-    }
+    if (obj === null)
+      throw new HttpException('No product found', HttpStatus.NOT_FOUND)
+
+    const product = this.classMapper.map(updateProductDto, UpdateProductDto, Product)
+    console.log(product)
+    return this.classMapper.map(await this.productRepository.save(product), Product, UpdateProductDto)
 
 
-    else
-      throw new HttpException('This Item deos not exits', HttpStatus.NOT_FOUND)
   }
 
   async remove(id: number) {

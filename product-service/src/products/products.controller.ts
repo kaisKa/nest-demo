@@ -17,14 +17,17 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @HasRoles(Role.User)
+  create(@Request() req:any, @Body() createProductDto: CreateProductDto) {
+    return this.productsService.create(req.user.userId,createProductDto);
   }
 
-  @Get()
-  findAll() {
-    return this.productsService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.productsService.findAll();
+  // }
 
   @Get('listAll')
   @ApiBearerAuth()
@@ -63,9 +66,10 @@ export class ProductsController {
       filter);
   }
 
-  @Get('user/:userId')
-  @ApiParam({ name: 'userId', type: String, required: false })
+  @Get('user')
   @ApiBearerAuth()
+  @ApiOperation({summary: 'list all products of an specidic , user determinded by the jwt token'})
+  @UseGuards(RolesGuard)
   @HasRoles(Role.User)
   getUserProducts(@Request() req: any) {
     console.log(req.user.sub)
@@ -84,6 +88,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @ApiOperation({summary: 'Update an product, providing its id'})
   update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
     console.log(updateProductDto)
     return this.productsService.update(+id, updateProductDto);

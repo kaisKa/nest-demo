@@ -4,12 +4,6 @@ import { Product } from "../entities/product.entity";
 import {AutoMap} from '@automapper/classes'
 import { ApiProperty } from "@nestjs/swagger";
 export class CreateProductDto{
-
-    
-    
-  @AutoMap()
-  @ApiProperty()
-  productId: string;
   
 
   @AutoMap()
@@ -21,7 +15,7 @@ export class CreateProductDto{
   price: number;
 
 
-  @AutoMap()
-  @ApiProperty()
-  userId: string;
+  // @AutoMap()
+  // @ApiProperty()
+  // userId: string;
 } //extends OmitType(Product, ['productId'] as const){}
