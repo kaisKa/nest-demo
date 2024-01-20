@@ -59,10 +59,11 @@ export class ProductsService {
 
   }
 
-  async paginate(options: IPaginationOptions, orderProperty: string, orderDirection: SortOrder): Promise<Pagination<Product>> {
+  async paginate(options: IPaginationOptions, sorting: Sorting): Promise<Pagination<Product>> {
 
     const queryBuilder = this.productRepository.createQueryBuilder('c')
-    queryBuilder.orderBy(orderProperty, orderDirection)
+    console.log(sorting)
+    queryBuilder.orderBy(sorting.property, sorting.direction)
     return paginate<Product>(queryBuilder, options)
 
   }

@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Request } from 'express';
 
 export interface Filtering {
@@ -8,6 +9,15 @@ export interface Filtering {
     value: string;
 }
 
+
+export class Filteringobj {
+    @ApiPropertyOptional({type:String})
+    readonly property: string;
+    @ApiPropertyOptional({type:String})
+    readonly rule: string;
+    @ApiPropertyOptional({type:String})
+    readonly value: string;
+}
 // valid filter rules
 export enum FilterRule {
     EQUALS = 'eq',

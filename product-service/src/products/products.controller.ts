@@ -3,14 +3,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpS
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product, SortingOption } from './entities/product.entity';
+import { Product } from './entities/product.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { SortOrder } from './sort.decorator';
-import { Filtering, FilteringParams } from './entities/filter.decorator';
+import { ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {  Sorting } from './sort.decorator';
+import { Filtering, FilteringParams, Filteringobj } from './entities/filter.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { HasRoles } from 'src/auth/has-role.decorator';
 import { Role } from 'src/models/role.enum';
+import { SkipAuth } from 'src/auth/skip-auth.decorator';
 
 @Controller('products')
 export class ProductsController {
@@ -20,8 +21,8 @@ export class ProductsController {
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @HasRoles(Role.User)
-  create(@Request() req:any, @Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(req.user.userId,createProductDto);
+  create(@Request() req: any, @Body() createProductDto: CreateProductDto) {
+    return this.productsService.create(req.user.userId, createProductDto);
   }
 
   // @Get()
@@ -29,30 +30,31 @@ export class ProductsController {
   //   return this.productsService.findAll();
   // }
 
+  @SkipAuth()
   @Get('listAll')
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @HasRoles(Role.User)
+  // @UseGuards(RolesGuard)
+  // @HasRoles(Role.User)
   @ApiOperation({ summary: 'List all product, paginated and sorted descinding regarding the price' })
-  @ApiQuery({ name: 'sort.propertye', required: false, enum: SortingOption })
-  @ApiQuery({ name: 'sort.direction', required: false, enum: SortOrder })
+  // @ApiQuery({ name: 'sort.propertye', required: false, enum: SortingOption })
+  // @ApiQuery({ name: 'sort.direction', required: false, enum: SortOrder })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
   async browse(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe,) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
-    @Query('sort.propertye') sortProperty: SortingOption = SortingOption.price,
-    @Query('sort.direction') sortDirection: SortOrder = SortOrder.DESC,
+    // @Query('sort.propertye') sortProperty: SortingOption = SortingOption.price,
+    // @Query('sort.direction') sortDirection: SortOrder = SortOrder.DESC,
     // @SortingParams(['price', 'productName']) sort: Sorting, 
-
+    @Query() sorting: Sorting
   ): Promise<Pagination<Product>> {
-
+console.log(sorting)
     limit = limit > 100 ? 100 : limit;
     return this.productsService.paginate({
       page,
       limit,
-    },
-      sortProperty, sortDirection);
+    }, sorting
+    );
 
   }
 
@@ -68,7 +70,7 @@ export class ProductsController {
 
   @Get('user')
   @ApiBearerAuth()
-  @ApiOperation({summary: 'list all products of an specidic , user determinded by the jwt token'})
+  @ApiOperation({ summary: 'list all products of an specidic , user determinded by the jwt token' })
   @UseGuards(RolesGuard)
   @HasRoles(Role.User)
   getUserProducts(@Request() req: any) {
@@ -77,7 +79,9 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  @SkipAuth()
+  findOne(@Query() filter: Filteringobj, @Param('id') id: number) {
+    console.log(filter)
     if (id == null)
       throw new HttpException('Missing id', HttpStatus.BAD_REQUEST);
     const result = this.productsService.findOne(id);
@@ -88,7 +92,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  @ApiOperation({summary: 'Update an product, providing its id'})
+  @ApiOperation({ summary: 'Update an product, providing its id' })
   update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
     console.log(updateProductDto)
     return this.productsService.update(+id, updateProductDto);

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { v4 as uuid  } from 'uuid';
-import { BaseEntity, Column, CreateDateColumn, Double, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { AutoMap } from "@automapper/classes";
 
@@ -29,8 +29,4 @@ export class Product {
   @CreateDateColumn()
   createdAt: string
 
-}
-export enum SortingOption {
-  price = 'price',
-  productName = 'product_name',
 }
