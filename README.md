@@ -44,7 +44,7 @@ The `product-service` is a simple service showcasing the usage of TypeORM with P
 
     ```bash
     git clone https://gitlab.com/pub-back-end/nest-test.git
-    cd nestjs-demo-project
+    cd nestjs-test
     ```
 
 2. **Start PostgreSQL using Docker Compose**
