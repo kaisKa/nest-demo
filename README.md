@@ -44,7 +44,7 @@ The `product-service` is a simple service showcasing the usage of TypeORM with P
 1. **Clone the Repository**
 
     ```bash
-    git clone https://github.com/your-username/nestjs-demo-project.git
+    git clone https://gitlab.com/pub-back-end/nest-test.git
     cd nestjs-demo-project
     ```
 
@@ -70,8 +70,10 @@ or use the adminer ui on `http://localhost:8080`
 
 ## Running the Project
 
-- For production: `npm run start`
-- For development: `npm run start:dev`
+- For production: ```bash 
+npm run start ```
+- For development: ```bash 
+npm run start:dev```
 
 ## Contributing
 
