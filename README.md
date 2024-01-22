@@ -69,10 +69,14 @@ or use the adminer ui on `http://localhost:8080`
 
 ## Running the Project
 
-- For production: ```bash 
-npm run start ```
-- For development: ```bash 
-npm run start:dev```
+- For production: 
+```bash 
+npm run start 
+```
+- For development: 
+```bash 
+npm run start:dev
+```
 
 ## Contributing
 
