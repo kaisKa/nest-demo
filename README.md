@@ -36,7 +36,6 @@ The `product-service` is a simple service showcasing the usage of TypeORM with P
 
 - Installed [Node.js](https://nodejs.org/).
 - Installed [Docker](https://www.docker.com/).
-- Installed [Nest.js]().
 - Familiarity with PostgreSQL database operations.
 
 ## Installation
